@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
+import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
 import supabase from "./SupabaseClient";
 import Login from "./Login";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { Box, Container, CssBaseline } from "@mui/material";
+import ButtonAppBar from "./ButtonAppBar";
+
+const theme = createTheme();
 
 function App() {
   const [user, setUser] = useState<null | User>(null);
@@ -27,13 +31,22 @@ function App() {
   };
 
   return (
-    <div className="App">
-      {!user ? (
-        <Login supabase={supabase} />
-      ) : (
-        <button onClick={handleLogout}>Logout</button>
-      )}
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <ButtonAppBar user={user} onLogout={handleLogout} />
+      <main>
+        <Box
+          sx={{
+            bgcolor: "background.paper",
+            pt: 8,
+            pb: 6,
+          }}
+        ></Box>
+        <Container sx={{ py: 8 }} maxWidth="md">
+          {!user ? <Login supabase={supabase} /> : "hello"}
+        </Container>
+      </main>
+    </ThemeProvider>
   );
 }
 
