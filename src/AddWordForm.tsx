@@ -1,4 +1,14 @@
-import { Box, Button, Chip, Stack, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Chip,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { PostgrestResponse } from "@supabase/supabase-js";
 import React, { useRef, useState } from "react";
 import { saveWord } from "./SupabaseClient";
 
@@ -20,6 +30,9 @@ export default function AddWordForm() {
   const [translations, setTranslations] = useState<string[]>([]);
   const wordRef = useRef<HTMLInputElement>();
   const translationsRef = useRef<HTMLInputElement>();
+  const [showSuccessSnackBar, setShowSuccessSnackBar] =
+    useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const addTranslation = (value: string) => {
     setTranslations([...translations, value.replace(/,$/g, "")]);
@@ -33,16 +46,29 @@ export default function AddWordForm() {
   };
 
   const handleOnClickSave = () => {
+    if (word.trim() === "" || translations.length === 0) {
+      setErrorMessage("Please enter a word and at least one translation.");
+      return;
+    }
+
     saveWord({
       word,
       translations,
       language: "en-de",
-    }).then(() => {
+    }).then(({ error }) => {
+      if (error) {
+        setErrorMessage(error.message);
+        return;
+      }
+
       wordRef.current!!.value = "";
       translationsRef.current!!.value = "";
+      setWord("");
       setTranslations([]);
 
-      // TODO: add snackbar
+      wordRef.current!!.focus();
+
+      setShowSuccessSnackBar(true);
     });
   };
 
@@ -115,10 +141,36 @@ export default function AddWordForm() {
           />
         </Box>
 
-        <Button variant="contained" onClick={handleOnClickSave}>
-          Save
-        </Button>
+        <Stack direction="row" justifyContent="end">
+          <Button
+            sx={{ marginTop: "2em", paddingLeft: "3em", paddingRight: "3em" }}
+            variant="contained"
+            onClick={handleOnClickSave}
+          >
+            Save
+          </Button>
+        </Stack>
       </Stack>
+
+      <Snackbar
+        open={showSuccessSnackBar}
+        onClose={() => setShowSuccessSnackBar(false)}
+        autoHideDuration={6000}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          Word was saved
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={errorMessage != null}
+        onClose={() => setErrorMessage(null)}
+        autoHideDuration={6000}
+      >
+        <Alert severity="error" sx={{ width: "100%" }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
