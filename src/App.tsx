@@ -3,8 +3,11 @@ import { User } from "@supabase/supabase-js";
 import supabase from "./SupabaseClient";
 import Login from "./Login";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Box, Container, CssBaseline } from "@mui/material";
+import { Container, CssBaseline, SpeedDial } from "@mui/material";
 import ButtonAppBar from "./ButtonAppBar";
+import { BrowserRouter, Route, Link, Routes } from "react-router-dom";
+import { Add } from "@mui/icons-material";
+import AddWordForm from "./AddWordForm";
 
 const theme = createTheme();
 
@@ -33,19 +36,38 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <ButtonAppBar user={user} onLogout={handleLogout} />
-      <main>
-        <Box
-          sx={{
-            bgcolor: "background.paper",
-            pt: 8,
-            pb: 6,
-          }}
-        ></Box>
-        <Container sx={{ py: 8 }} maxWidth="md">
-          {!user ? <Login supabase={supabase} /> : "hello"}
-        </Container>
-      </main>
+      <BrowserRouter>
+        <ButtonAppBar user={user} onLogout={handleLogout} />
+        <main>
+          <Container sx={{ py: 8 }} maxWidth="md">
+            {!user ? (
+              <Login supabase={supabase} />
+            ) : (
+              <>
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <div>
+                        * use modal to save words * Duolingo-style vocab
+                        training
+                      </div>
+                    }
+                  />
+                  <Route path="/new" element={<AddWordForm />} />
+                </Routes>
+                <Link to="/new">
+                  <SpeedDial
+                    ariaLabel="add new words"
+                    sx={{ position: "absolute", bottom: 16, right: 16 }}
+                    icon={<Add />}
+                  ></SpeedDial>
+                </Link>
+              </>
+            )}
+          </Container>
+        </main>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }

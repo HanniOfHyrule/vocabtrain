@@ -50,8 +50,7 @@ export default function Login(props: LoginProps) {
           color="text.secondary"
           paragraph
         >
-          Skip the hassle and use Vocabtrain to learn just the vocubulary you
-          need!
+          Skip the hassle and use Vocabtrain to learn just the words you need!
         </Typography>
         <Stack
           sx={{ pt: 4 }}
@@ -59,7 +58,11 @@ export default function Login(props: LoginProps) {
           spacing={2}
           justifyContent="center"
         >
-          <Button variant="contained" onClick={handleSignInWithDiscord}>
+          <Button
+            variant="contained"
+            onClick={handleSignInWithDiscord}
+            size="large"
+          >
             Login with Discord
           </Button>
         </Stack>
