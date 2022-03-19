@@ -8,7 +8,6 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { PostgrestResponse } from "@supabase/supabase-js";
 import React, { useRef, useState } from "react";
 import { saveWord } from "./SupabaseClient";
 
